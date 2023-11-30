@@ -16,7 +16,7 @@ public class OxfordLearnersDictionariesParser extends HtmlPageParser {
 
     public EnglishPronunciations getEnglishPronunciations() {
         Element phonetics = doc.select(".phonetics").first();
-        if (isNull(phonetics)) return null;
+        if (isNull(phonetics)) return new EnglishPronunciations();
         List<Pronunciation> uk = getPronunciations(phonetics.child(0));
         List<Pronunciation> us = getPronunciations(phonetics.child(1));
         return new EnglishPronunciations(uk, us);
@@ -24,7 +24,7 @@ public class OxfordLearnersDictionariesParser extends HtmlPageParser {
 
 
     private List<Pronunciation> getPronunciations(Element src) {
-        if (isNull(src)) return null;
+        if (isNull(src)) return List.of();
         List<String> url = src.select(".sound").stream().map((e) -> e.attr("data-src-mp3")).toList();
         List<String> tr = src.select(".phon").stream().map((e) -> e.text().replaceAll("/", "")).toList();
         List<Pronunciation> pr = new ArrayList<>();

@@ -1,5 +1,6 @@
 package com.branow.memowebsearch.parser.items;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,7 +10,8 @@ public class EnglishPronunciations {
     private List<Pronunciation> us;
 
     public EnglishPronunciations() {
-
+        this.uk = new ArrayList<>();
+        this.us = new ArrayList<>();
     }
 
     public EnglishPronunciations(List<Pronunciation> uk, List<Pronunciation> us) {

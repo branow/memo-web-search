@@ -14,9 +14,9 @@ public class VeectezyParser extends HtmlPageParser {
 
     public List<String> getImageUrls() {
         Element result = doc.select("div.ez-search-results").first();
-        if (isNull(result)) return null;
+        if (isNull(result)) return List.of();
         Element grid = result.select("ul.ez-resource-grid").first();
-        if (isNull(grid)) return null;
+        if (isNull(grid)) return List.of();
         return grid.select("li").stream()
                 .map(e -> {
                     Element img = e.select("img").first();
