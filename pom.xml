@@ -4,11 +4,16 @@
 
   <groupId>com.branow</groupId>
   <artifactId>memo-web-search</artifactId>
-  <version>0</version>
+  <version>0.1</version>
   <packaging>jar</packaging>
 
-  <name>memo-web-search</name>
-  <url>http://maven.apache.org</url>
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub branow Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/branow/memo-web-search</url>
+    </repository>
+  </distributionManagement>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
