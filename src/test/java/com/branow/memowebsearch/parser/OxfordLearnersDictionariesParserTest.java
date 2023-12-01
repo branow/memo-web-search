@@ -1,7 +1,8 @@
 package com.branow.memowebsearch.parser;
 
-import com.branow.memowebsearch.parser.items.EnglishPronunciations;
-import com.branow.memowebsearch.parser.items.Pronunciation;
+import com.branow.memowebsearch.parser.items.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Assertions;
@@ -22,6 +23,17 @@ public class OxfordLearnersDictionariesParserTest {
         OxfordLearnersDictionariesParser parser = new OxfordLearnersDictionariesParser(doc);
         EnglishPronunciations actual = parser.getEnglishPronunciations();
         Assertions.assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideGetEnglishWord")
+    public void getEnglishWord(String srcUrl) throws IOException {
+        Document doc = Jsoup.connect(srcUrl).get();
+        OxfordLearnersDictionariesParser parser = new OxfordLearnersDictionariesParser(doc);
+        EnglishWord actual = parser.getEnglishWord();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(actual);
+        System.out.println(json);
     }
 
     private static Stream<Arguments> provideGetEnglishPronunciations() {
@@ -68,6 +80,15 @@ public class OxfordLearnersDictionariesParserTest {
                                 )
                         )
                 )
+        );
+    }
+
+    private static Stream<Arguments> provideGetEnglishWord() {
+        return Stream.of(
+                Arguments.of("https://www.oxfordlearnersdictionaries.com/definition/english/put-on_1?q=put+on"),
+                Arguments.of("https://www.oxfordlearnersdictionaries.com/definition/english/direct_1?q=direct"),
+                Arguments.of("https://www.oxfordlearnersdictionaries.com/definition/english/vacuum-cleaner?q=vacuum+cleaner"),
+                Arguments.of("https://www.oxfordlearnersdictionaries.com/spellcheck/english/?q=stange+val")
         );
     }
 
