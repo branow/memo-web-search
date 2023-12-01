@@ -19,26 +19,7 @@ public class OxfordLearnersDictionariesSearcher extends DataSearcher {
         super("www.oxfordlearnersdictionaries.com");
     }
 
-    public  List<EnglishWordUnit> searchEnglishWordUnits(String word, List<EnglishVariant> variants, List<PartOfSpeech> speech,
-                                                 List<WordDefComponent> components) {
-        List<EnglishWordUnit> units = new ArrayList<>();
-        String query = word.replaceAll(" ", "-");
-        for (int i = 0; i < 7; i++) {
-            String url = url() + DEFINITION_ENGLISH.replace("[query]", query)
-                    .replace("[number]", String.valueOf(i + 1));
-            Document doc = null;
-            try {
-                doc = get(url);
-            } catch (SiteConnectException e) {
-                break;
-            }
-            EnglishWord w = new OxfordLearnersDictionariesParser(doc).getEnglishWord();
-            if (w.getPartOfSpeech() == null || speech.contains(PartOfSpeech.parse(w.getPartOfSpeech()))) {
-               units.add(convert(w, variants, components));
-            }
-        }
-        return units;
-    }
+
 
     public List<WebContainer<EnglishWordSenseUnit>> searchEnglishWordSenseUnits(String word) {
         String query = word.replaceAll(" ", "-");
@@ -77,6 +58,65 @@ public class OxfordLearnersDictionariesSearcher extends DataSearcher {
             audios.addAll(convert("american", p.getUs().stream().map(Pronunciation::getAudioUrl).toList()));
         }
         return audios.stream().distinct().toList();
+    }
+
+    public EnglishSolidWord searchEnglishSolidWord(String word) {
+        String query = word.replaceAll(" ", "-");
+        List<EnglishPartWord> partWordList = new ArrayList<>();
+        String foundWord = word;
+        for (int i = 0; i < 7; i++) {
+            String url = url() + DEFINITION_ENGLISH.replace("[query]", query)
+                    .replace("[number]", String.valueOf(i + 1));
+            Document doc = null;
+            try {
+                doc = get(url);
+            } catch (SiteConnectException e) {
+                break;
+            }
+            EnglishWord w = new OxfordLearnersDictionariesParser(doc).getEnglishWord();
+            partWordList.add(toEnglishPartWord(w));
+            foundWord = w.getWord();
+        }
+        return new EnglishSolidWord(foundWord, partWordList);
+    }
+
+    private EnglishPartWord toEnglishPartWord(EnglishWord word) {
+        EnglishPartWord partWord = new EnglishPartWord();
+        partWord.setPartOfSpeech(word.getPartOfSpeech());
+        if (!word.getPronunciations().getUs().isEmpty()) {
+            partWord.setTranscription(word.getPronunciations().getUs().get(0).getTranscription());
+            partWord.setAudio(word.getPronunciations().getUs().get(0).getAudioUrl());
+        }
+        if (!word.getSenses().isEmpty() && !word.getSenses().get(0).getSenses().isEmpty()) {
+            Sense sense = word.getSenses().get(0).getSenses().get(0);
+            partWord.setDefinition(sense.getDefinition());
+            partWord.setLanguageLevel(sense.getLanguageLevel());
+            List<String> examples = sense.getExamples();
+            partWord.setExamples(examples.subList(0, Math.min(3, examples.size())));
+        }
+        return partWord;
+    }
+
+
+    public  List<EnglishWordUnit> searchEnglishWordUnits(String word, List<EnglishVariant> variants, List<PartOfSpeech> speech,
+                                                         List<WordDefComponent> components) {
+        List<EnglishWordUnit> units = new ArrayList<>();
+        String query = word.replaceAll(" ", "-");
+        for (int i = 0; i < 7; i++) {
+            String url = url() + DEFINITION_ENGLISH.replace("[query]", query)
+                    .replace("[number]", String.valueOf(i + 1));
+            Document doc = null;
+            try {
+                doc = get(url);
+            } catch (SiteConnectException e) {
+                break;
+            }
+            EnglishWord w = new OxfordLearnersDictionariesParser(doc).getEnglishWord();
+            if (w.getPartOfSpeech() == null || speech.contains(PartOfSpeech.parse(w.getPartOfSpeech()))) {
+                units.add(convert(w, variants, components));
+            }
+        }
+        return units;
     }
 
     private List<WebContainer<String>> convert(String prefix, List<String> audios) {

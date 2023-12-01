@@ -51,6 +51,15 @@ public class OxfordLearnersDictionariesSearcherTest {
         System.out.println(json);
     }
 
+    @ParameterizedTest
+    @MethodSource("provideSearchEnglishSolidWord")
+    public void searchEnglishSolidWord(String word) throws IOException {
+        EnglishSolidWord containers = searcher.searchEnglishSolidWord(word);
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(containers);
+        System.out.println(json);
+    }
+
     private static Stream<Arguments> provideSearchAudiosUrls() {
         return Stream.of(
                 Arguments.of(
@@ -80,6 +89,15 @@ public class OxfordLearnersDictionariesSearcherTest {
     }
 
     private static Stream<Arguments> provideSearchEnglishWordSenseUnits() {
+        return Stream.of(
+                Arguments.of("dog"),
+                Arguments.of("direct"),
+                Arguments.of("vacuum cleaner"),
+                Arguments.of("stange val")
+        );
+    }
+
+    private static Stream<Arguments> provideSearchEnglishSolidWord() {
         return Stream.of(
                 Arguments.of("dog"),
                 Arguments.of("direct"),
