@@ -13,13 +13,15 @@ public class VeectezyParser extends HtmlPageParser {
     }
 
     public List<String> getImageUrls() {
-        Element result = doc.select("div.ez-search-results").first();
-        if (isNull(result)) return List.of();
-        Element grid = result.select("ul.ez-resource-grid").first();
-        if (isNull(grid)) return List.of();
+        return wrapList(() -> parseImageUrls(doc));
+    }
+
+    private List<String> parseImageUrls(Element src) {
+        Element result = doc.selectFirst("div.ez-search-results");
+        Element grid = result.selectFirst("ul.ez-resource-grid");
         return grid.select("li").stream()
                 .map(e -> {
-                    Element img = e.select("img").first();
+                    Element img = e.selectFirst("img");
                     if (isNull(img)) return null;
                     return img.attr("src");
                 })
