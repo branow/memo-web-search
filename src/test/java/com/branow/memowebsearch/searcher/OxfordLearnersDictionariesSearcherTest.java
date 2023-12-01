@@ -4,7 +4,7 @@ import com.branow.memowebsearch.WebContainer;
 import com.branow.memowebsearch.parser.OxfordLearnersDictionariesParser;
 import com.branow.memowebsearch.parser.items.EnglishWord;
 import com.branow.memowebsearch.search.OxfordLearnersDictionariesSearcher;
-import com.branow.memowebsearch.search.items.EnglishWordSenseUnit;
+import com.branow.memowebsearch.search.items.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.jsoup.Jsoup;
@@ -36,6 +36,16 @@ public class OxfordLearnersDictionariesSearcherTest {
     @MethodSource("provideSearchEnglishWordSenseUnits")
     public void searchEnglishWordSenseUnits(String word) throws IOException {
         List<WebContainer<EnglishWordSenseUnit>> containers = searcher.searchEnglishWordSenseUnits(word);
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(containers);
+        System.out.println(json);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideSearchEnglishWordUnits")
+    public void searchEnglishWordUnits(String word, List<EnglishVariant> variants, List<PartOfSpeech> speech,
+                                       List<WordDefComponent> components) throws IOException {
+        List<EnglishWordUnit> containers = searcher.searchEnglishWordUnits(word, variants, speech, components);
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(containers);
         System.out.println(json);
@@ -75,6 +85,35 @@ public class OxfordLearnersDictionariesSearcherTest {
                 Arguments.of("direct"),
                 Arguments.of("vacuum cleaner"),
                 Arguments.of("stange val")
+        );
+    }
+
+    private static Stream<Arguments> provideSearchEnglishWordUnits() {
+        return Stream.of(
+                Arguments.of(
+                        "dog",
+                        List.of(EnglishVariant.BRITISH),
+                        List.of(PartOfSpeech.NOUN),
+                        List.of(WordDefComponent.AUDIO)
+                ),
+                Arguments.of(
+                        "direct",
+                        List.of(EnglishVariant.BRITISH, EnglishVariant.AMERICAN),
+                        List.of(PartOfSpeech.NOUN, PartOfSpeech.EXCLAMATION, PartOfSpeech.ADVERB),
+                        List.of(WordDefComponent.AUDIO, WordDefComponent.EXAMPLE)
+                ),
+                Arguments.of(
+                        "vacuum cleaner",
+                        List.of(EnglishVariant.BRITISH),
+                        List.of(PartOfSpeech.NOUN),
+                        List.of(WordDefComponent.TRANSCRIPTION)
+                ),
+                Arguments.of(
+                        "stange val",
+                        List.of(EnglishVariant.BRITISH),
+                        List.of(PartOfSpeech.NOUN),
+                        List.of(WordDefComponent.AUDIO)
+                )
         );
     }
 
