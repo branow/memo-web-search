@@ -2,7 +2,10 @@ package com.branow.memowebsearch.parser;
 
 import org.jsoup.nodes.Document;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class HtmlPageParser {
 
@@ -27,5 +30,21 @@ public class HtmlPageParser {
 
     protected boolean isNull(Object o) {
         return o == null;
+    }
+
+    protected <T> T wrap(Supplier<T> supplier, T other) {
+        try {
+            return supplier.get();
+        } catch (Exception e) {
+            return other;
+        }
+    }
+
+    protected <T> T wrapNull(Supplier<T> supplier) {
+        return wrap(supplier, null);
+    }
+
+    protected <T> List<T> wrapList(Supplier<List<T>> supplier) {
+        return wrap(supplier, List.of());
     }
 }
