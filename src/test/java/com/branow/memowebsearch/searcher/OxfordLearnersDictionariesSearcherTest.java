@@ -1,12 +1,20 @@
 package com.branow.memowebsearch.searcher;
 
 import com.branow.memowebsearch.WebContainer;
+import com.branow.memowebsearch.parser.OxfordLearnersDictionariesParser;
+import com.branow.memowebsearch.parser.items.EnglishWord;
 import com.branow.memowebsearch.search.OxfordLearnersDictionariesSearcher;
+import com.branow.memowebsearch.search.items.EnglishWordSenseUnit;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -22,6 +30,15 @@ public class OxfordLearnersDictionariesSearcherTest {
         List<String> actual = containers.stream()
                 .map(WebContainer::getData).toList();
         Assertions.assertEquals(expected, actual);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideSearchEnglishWordSenseUnits")
+    public void searchEnglishWordSenseUnits(String word) throws IOException {
+        List<WebContainer<EnglishWordSenseUnit>> containers = searcher.searchEnglishWordSenseUnits(word);
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(containers);
+        System.out.println(json);
     }
 
     private static Stream<Arguments> provideSearchAudiosUrls() {
@@ -49,6 +66,15 @@ public class OxfordLearnersDictionariesSearcherTest {
                                 "https://www.oxfordlearnersdictionaries.com/media/english/us_pron/v/vac/vacuu/vacuum_cleaner_1_us_3.mp3"
                         )
                 )
+        );
+    }
+
+    private static Stream<Arguments> provideSearchEnglishWordSenseUnits() {
+        return Stream.of(
+                Arguments.of("dog"),
+                Arguments.of("direct"),
+                Arguments.of("vacuum cleaner"),
+                Arguments.of("stange val")
         );
     }
 
