@@ -35,7 +35,13 @@ public class OxfordLearnersDictionariesParser extends HtmlPageParser {
         }
         Element senses = src.selectFirst(".senses_multiple");
         if (senses != null) {
-            return senses.select(".shcut-g").stream().map(this::parseTopicSenseShcutg).toList();
+            Elements shcutgs = senses.select(".shcut-g");
+            if (!shcutgs.isEmpty()) {
+                return shcutgs.stream().map(this::parseTopicSenseShcutg).toList();
+            } else {
+                return List.of(parseTopicSenseSingle(senses));
+            }
+
         }
         Element sense = src.selectFirst(".sense_single");
         return List.of(wrap(() -> parseTopicSenseSingle(sense), new TopicSense()));
@@ -92,9 +98,12 @@ public class OxfordLearnersDictionariesParser extends HtmlPageParser {
 
     private List<String> parseExamples(Element src) {
         Element examples = src.selectFirst(".examples");
-        return examples.select("li").stream().map(Element::text).toList();
+        return examples.select("li").stream().map(this::parseExample).toList();
     }
 
+    private String parseExample(Element src) {
+        return src.selectFirst(".x").text();
+    }
 
     public EnglishPronunciations getEnglishPronunciations() {
         return wrap(() -> parseEnglishPronunciations(doc), new EnglishPronunciations());
