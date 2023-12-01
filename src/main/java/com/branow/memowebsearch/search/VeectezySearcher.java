@@ -14,7 +14,18 @@ public class VeectezySearcher extends DataSearcher {
         super("www.vecteezy.com");
     }
 
-    public List<WebContainer<String>> getImagesUrlFreePageFirst(String phrase) {
+    public String searchImagesUrl(String phrase) {
+        String query = phrase.replaceAll(" ", "-");
+        String url = url() +  SEARCH_IMAGE_FREE_AI_PAGE.replace("[query]", query).replace("[page]", String.valueOf(1));
+        List<String> images = new VeectezyParser(get(url)).getImageUrls();
+        if (images.isEmpty()) {
+            return null;
+        } else {
+            return images.get(0);
+        }
+    }
+
+    public List<WebContainer<String>> searchImagesUrlFreePageFirst(String phrase) {
         String query = phrase.replaceAll(" ", "-");
         String url = url() +  SEARCH_IMAGE_FREE_AI_PAGE.replace("[query]", query).replace("[page]", String.valueOf(1));
         return new VeectezyParser(get(url)).getImageUrls().stream()

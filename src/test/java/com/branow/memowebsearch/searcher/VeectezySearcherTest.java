@@ -1,15 +1,12 @@
 package com.branow.memowebsearch.searcher;
 
 import com.branow.memowebsearch.WebContainer;
-import com.branow.memowebsearch.parser.VeectezyParser;
 import com.branow.memowebsearch.search.VeectezySearcher;
-import org.jsoup.Jsoup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -21,7 +18,7 @@ public class VeectezySearcherTest {
     @ParameterizedTest
     @MethodSource("provideGetImagesUrlFreePageFirst")
     public void getImagesUrlFreePageFirst(String phrase) {
-        List<WebContainer<String>> containers = searcher.getImagesUrlFreePageFirst(phrase);
+        List<WebContainer<String>> containers = searcher.searchImagesUrlFreePageFirst(phrase);
         containers.forEach(System.out::println);
         List<String> urls = containers.stream()
                 .map(WebContainer::getData).toList();
