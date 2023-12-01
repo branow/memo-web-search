@@ -64,6 +64,8 @@ public class OxfordLearnersDictionariesSearcher extends DataSearcher {
         String query = word.replaceAll(" ", "-");
         List<EnglishPartWord> partWordList = new ArrayList<>();
         String foundWord = word;
+        String transcription = null;
+        String audio = null;
         for (int i = 0; i < 7; i++) {
             String url = url() + DEFINITION_ENGLISH.replace("[query]", query)
                     .replace("[number]", String.valueOf(i + 1));
@@ -76,17 +78,17 @@ public class OxfordLearnersDictionariesSearcher extends DataSearcher {
             EnglishWord w = new OxfordLearnersDictionariesParser(doc).getEnglishWord();
             partWordList.add(toEnglishPartWord(w));
             foundWord = w.getWord();
+            if (!w.getPronunciations().getUs().isEmpty()) {
+                transcription = w.getPronunciations().getUs().get(0).getTranscription();
+                audio = w.getPronunciations().getUs().get(0).getAudioUrl();
+            }
         }
-        return new EnglishSolidWord(foundWord, partWordList);
+        return new EnglishSolidWord(foundWord, transcription, audio, partWordList);
     }
 
     private EnglishPartWord toEnglishPartWord(EnglishWord word) {
         EnglishPartWord partWord = new EnglishPartWord();
         partWord.setPartOfSpeech(word.getPartOfSpeech());
-        if (!word.getPronunciations().getUs().isEmpty()) {
-            partWord.setTranscription(word.getPronunciations().getUs().get(0).getTranscription());
-            partWord.setAudio(word.getPronunciations().getUs().get(0).getAudioUrl());
-        }
         if (!word.getSenses().isEmpty() && !word.getSenses().get(0).getSenses().isEmpty()) {
             Sense sense = word.getSenses().get(0).getSenses().get(0);
             partWord.setDefinition(sense.getDefinition());

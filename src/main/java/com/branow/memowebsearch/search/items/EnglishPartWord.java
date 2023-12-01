@@ -6,8 +6,6 @@ import java.util.Objects;
 public class EnglishPartWord {
 
     private String partOfSpeech;
-    private String transcription;
-    private String audio;
     private String languageLevel;
     private String definition;
     private List<String> examples;
@@ -18,22 +16,6 @@ public class EnglishPartWord {
 
     public void setPartOfSpeech(String partOfSpeech) {
         this.partOfSpeech = partOfSpeech;
-    }
-
-    public String getTranscription() {
-        return transcription;
-    }
-
-    public void setTranscription(String transcription) {
-        this.transcription = transcription;
-    }
-
-    public String getAudio() {
-        return audio;
-    }
-
-    public void setAudio(String audio) {
-        this.audio = audio;
     }
 
     public String getLanguageLevel() {
@@ -64,21 +46,19 @@ public class EnglishPartWord {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EnglishPartWord that = (EnglishPartWord) o;
-        return Objects.equals(partOfSpeech, that.partOfSpeech) && Objects.equals(transcription, that.transcription) && Objects.equals(audio, that.audio) && Objects.equals(languageLevel, that.languageLevel) && Objects.equals(definition, that.definition) && Objects.equals(examples, that.examples);
+        EnglishPartWord partWord = (EnglishPartWord) o;
+        return Objects.equals(partOfSpeech, partWord.partOfSpeech) && Objects.equals(languageLevel, partWord.languageLevel) && Objects.equals(definition, partWord.definition) && Objects.equals(examples, partWord.examples);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(partOfSpeech, transcription, audio, languageLevel, definition, examples);
+        return Objects.hash(partOfSpeech, languageLevel, definition, examples);
     }
 
     @Override
     public String toString() {
         return "EnglishPartWord{" +
                 "partOfSpeech='" + partOfSpeech + '\'' +
-                ", transcription='" + transcription + '\'' +
-                ", audio='" + audio + '\'' +
                 ", languageLevel='" + languageLevel + '\'' +
                 ", definition='" + definition + '\'' +
                 ", examples=" + examples +
