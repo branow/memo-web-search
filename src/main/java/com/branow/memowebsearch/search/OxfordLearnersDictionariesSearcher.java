@@ -83,7 +83,7 @@ public class OxfordLearnersDictionariesSearcher extends DataSearcher {
                 audio = w.getPronunciations().getUs().get(0).getAudioUrl();
             }
         }
-        return new EnglishSolidWord(foundWord, transcription, audio, partWordList);
+        return new EnglishSolidWord(foundWord, audio, transcription, partWordList);
     }
 
     private EnglishPartWord toEnglishPartWord(EnglishWord word) {
